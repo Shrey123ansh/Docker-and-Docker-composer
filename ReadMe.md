@@ -1,120 +1,191 @@
-docker build -t myapp .
+Here's a formatted README file based on your provided commands and descriptions.
 
- <!-- For build docker after writing the code  -->
+---
 
-docker build -t myapp:v1 .
+# Docker Commands Cheat Sheet
 
- <!-- **MOST IMPORTANT**: For build docker after writing the code in tag version -->
+This document provides a summary of useful Docker commands for building, running, and managing Docker containers and images.
 
-<!-- [+] Building 30.0s (10/10) FINISHED                                                                                                                                   docker:default
- => [internal] load build definition from Dockerfile                                                                                                                            0.1s
- => => transferring dockerfile: 179B                                                                                                                                            0.0s
- => [interna -->
+## Build Docker Images
 
-docker images
+- Build Docker image with a tag:
+  ```sh
+  docker build -t myapp .
+  ```
+- Build Docker image with a specific version tag:
+  ```sh
+  docker build -t myapp:v1 .
+  ```
 
- <!-- To check images -->
+## Check Docker Images
 
-<!-- REPOSITORY                 TAG       IMAGE ID       CREATED          SIZE
-myapp                      latest    1b22886d531c   50 minutes ago   173MB
-node                       latest    3d4b037e6712   11 days ago      1.11GB
-docker/welcome-to-docker   latest    c1f619b6477e   6 months ago     18.6MB -->
+- List all Docker images:
+  ```sh
+  docker images
+  ```
+  Example output:
+  ```
+  REPOSITORY                 TAG       IMAGE ID       CREATED          SIZE
+  myapp                      latest    1b22886d531c   50 minutes ago   173MB
+  node                       latest    3d4b037e6712   11 days ago      1.11GB
+  docker/welcome-to-docker   latest    c1f619b6477e   6 months ago     18.6MB
+  ```
 
-docker run --name myapp_a1 myapp:latest
+## Run Docker Containers
 
-<!-- NON detachable IN TERMINAL -->
+- Run a container (non-detachable, in terminal):
+  ```sh
+  docker run --name myapp_a1 myapp:latest
+  ```
+  - Listening for requests on port 4000.
+- Run a container (detachable, in terminal):
 
-<!-- listening for requests on port 4000 -->
+  ```sh
+  docker run --name myapp_c2 -p 4000:4000 -d myapp:latest
+  ```
 
-docker run --name myapp_c2 -p 4000:4000 -d myapp:latest
+  - Example container ID: `84dce28d7765e958afcc78b2ca8ff3df44818932e066184702b83ac569eabeb1`
 
-<!-- Detachable IN TERMINAL -->
+- Run a container and delete it automatically when stopped:
 
-<!-- 84dce28d7765e958afcc78b2ca8ff3df44818932e066184702b83ac569eabeb1 -->
+  ```sh
+  docker run --name myapp_mon -p 4000:4000 --rm myapp:v3
+  ```
 
-docker run --name myapp_mon -p 4000:4000 --rm myapp:v3
+  - Listening for requests on port 4000.
 
-<!-- NON-Detachable IN TERMINAL -->
+- Run a container with volume binding and delete it automatically when stopped:
+  ```sh
+  docker run --name myapp_mon -p 4000:4000 --rm -v /home/shreyansh/Docker/project_react/api-5:/app -v /app/node_modules myapp:v3
+  ```
+  - Listening for requests on port 4000.
 
-<!-- IMPORTANT:: listening for requests on port 4000, but will delete container automatically if you stop that container -->
+## Stop Docker Containers
 
-docker run --name myapp_mon -p 4000:4000 --rm -v /home/shreyansh/Docker/project_react/api-5:/app -v /app/node_modules myapp:v3
+- Stop a running container:
+  ```sh
+  docker stop myapp_c2
+  ```
 
-<!-- NON-Detachable IN TERMINAL -->
+## List Docker Containers
 
-<!-- **MOST IMPORTANT** (concept VOLUME):: listening for requests on port 4000, but will delete container automatically if you stop that container -->
+- List running containers:
 
-docker stop myapp_c2
+  ```sh
+  docker ps
+  ```
 
-<!-- myapp_c2 -->
+  - Example output:
+    ```
+    CONTAINER ID   IMAGE     COMMAND   CREATED   STATUS    PORTS     NAMES
+    ```
 
-docker ps
+- List all containers (running and non-running):
+  ```sh
+  docker ps -a
+  ```
+  - Example output:
+    ```
+    CONTAINER ID   IMAGE          COMMAND                  CREATED              STATUS                         PORTS     NAMES
+    84dce28d7765   myapp:latest   "docker-entrypoint.s…"   About a minute ago   Exited (137) 41 seconds ago              myapp_c2
+    6a7b5e2b50dc   myapp:latest   "docker-entrypoint.s…"   7 minutes ago        Exited (137) 7 minutes ago               myapp_a1
+    ```
 
-<!-- Will only show the running containers! -->
+## Start Docker Containers
 
-<!-- CONTAINER ID   IMAGE     COMMAND   CREATED   STATUS    PORTS     NAMES -->
+- Start a stopped container (non-interactive):
 
-docker ps -a
+  ```sh
+  docker start myapp_c2
+  ```
 
-<!-- Will show both running and non-running containers! -->
+- Start a stopped container (interactive):
+  ```sh
+  docker start -i myapp_c2
+  ```
 
-<!-- CONTAINER ID   IMAGE          COMMAND                  CREATED              STATUS                         PORTS     NAMES
-84dce28d7765   myapp:latest   "docker-entrypoint.s…"   About a minute ago   Exited (137) 41 seconds ago              myapp_c2
-6a7b5e2b50dc   myapp:latest   "docker-entrypoint.s…"   7 minutes ago        Exited (137) 7 minutes ago               myapp_a1 -->
+## Remove Docker Images
 
-docker start myapp_c2
+- Remove a Docker image:
 
-<!-- Already build one before with not working terminal -->
+  ```sh
+  docker image rm myapp
+  ```
 
-<!-- myapp_c2 -->
+  - Error response if container using the image exists:
+    ```
+    Error response from daemon: conflict: unable to remove repository reference "myapp" (must force) - container a2c62b61076d is using its referenced image 1b22886d531c
+    ```
 
-docker start -i myapp_c2
+- Force remove a Docker image:
+  ```sh
+  docker image rm myapp3 -f
+  ```
 
-<!-- Already build one before with working terminal -->
+## Remove Docker Containers
 
-<!-- myapp_c2 -->
+- Remove one or more Docker containers:
+  ```sh
+  docker container rm myapp_c1 myapp_c2
+  ```
 
-docker image rm myapp
+## Clean Up Docker System
 
-<!-- if container does exists -->
-<!-- Error response from daemon: conflict: unable to remove repository reference "myapp" (must force) - container a2c62b61076d is using its referenced image 1b22886d531c -->
+- Remove all unused images, containers, and volumes:
+  ```sh
+  docker system prune -a
+  ```
 
-docker image rm myapp2
+## Docker Compose Commands
 
-<!-- if container doesnt exists -->
-<!-- Deleted: sha256:b6a849c79e247dce78530cbc69dd30e7d93494bebf4d718cdf41526d0359a2f3 -->
+- Start services defined in a `docker-compose.yml` file:
 
-docker image rm myapp3 -f
+  ```sh
+  docker-compose up
+  ```
 
-<!-- Delete it forcefully -->
-<!-- Deleted: sha256:b6a849c79e247dce78530cbc69dd30e7d93494bebf4d718cdf41526d0359a2f3 -->
+- Stop services started by Docker Compose:
 
-docker container rm myapp_c1 myapp_c2
+  ```sh
+  docker-compose down
+  ```
 
-<!-- both or ones remove container -->
+- Stop services and remove all images, containers, and volumes:
+  ```sh
+  docker-compose down --rmi all -v
+  ```
 
-docker system prune -a
+## Push and Pull Docker Images
 
-<!-- Remove all the images -->
+- Build and tag Docker image:
 
-docker-compose up
+  ```sh
+  docker build -t shreyann56sh/myapp .
+  ```
 
-<!-- For start the process -->
+- Push Docker image to Docker Hub:
 
-docker-compose down
+  ```sh
+  docker push shreyann56sh/myapp
+  ```
 
-<!-- For stop the process, but images, container and volume will remain in docker app -->
+- Remove local Docker image:
 
-docker-compose down --rmi all -v
+  ```sh
+  docker image rm shreyann56sh/myapp
+  ```
 
-<!-- For stoping the process and removes all images, container and volume. -->
+- Verify removal by listing images:
 
-<!-- //////////////////////////////////////////////// -->
+  ```sh
+  docker images
+  ```
 
-<!-- "Final how to push and pull the images" -->
+- Pull Docker image from Docker Hub:
+  ```sh
+  docker pull shreyann56sh/myapp
+  ```
 
-docker build -t shreyann56sh/myapp .
-docker push shreyann56sh/myapp
-docker image rm shreyann56sh/myapp
-docker images
-docker pull shreyann56sh/myapp
+---
+
+This cheat sheet provides a quick reference to essential Docker commands, enabling efficient container and image management.
